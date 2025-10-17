@@ -1,5 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import AuthProvider, { useAuth } from "./auth/AuthContext";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+// import các trang hiện có của bạn: Home, Journal, Forum, ...
 /**
  * SafeSpace — MVP single‑file React app (VN)
  * Notes:
@@ -48,6 +53,15 @@ function useLocal(key, init) {
   useEffect(() => { try { localStorage.setItem(key, JSON.stringify(state)); } catch {}
   }, [key, state]);
   return [state, set];
+}
+
+function Home() {
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-semibold">SafeSpace</h1>
+      <p className="mt-6 text-slate-600">Khu vực an toàn để chia sẻ cảm xúc…</p>
+    </div>
+  );
 }
 
 function Section({ title, desc, right, children }) {
@@ -761,7 +775,8 @@ function Rules() {
 }
 
 // ---------- App Shell ----------
-export default function App() {
+// ---------- App Shell ----------
+function MainApp() {
   const [tab, setTab] = useState("feed");
 
   return (
@@ -777,8 +792,15 @@ export default function App() {
           </div>
           <nav className="hidden md:flex items-center gap-2">
             {tabs.map(t => (
-              <button key={t.id} onClick={()=>setTab(t.id)}
-                className={`px-3 py-1.5 rounded-xl text-sm ${tab===t.id? 'bg-sky-600 text-white':'bg-slate-100 text-slate-700'}`}>{t.label}</button>
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`px-3 py-1.5 rounded-xl text-sm ${
+                  tab === t.id ? "bg-sky-600 text-white" : "bg-slate-100 text-slate-700"
+                }`}
+              >
+                {t.label}
+              </button>
             ))}
           </nav>
         </div>
@@ -787,10 +809,19 @@ export default function App() {
       <main className="max-w-6xl mx-auto px-4 py-6 grid gap-6">
         <SafetyBanner />
         <div className="md:hidden">
-          <select value={tab} onChange={e=>setTab(e.target.value)} className="w-full rounded-xl border p-2">
-            {tabs.map(t => <option key={t.id} value={t.id}>{t.label}</option>)}
+          <select
+            value={tab}
+            onChange={e => setTab(e.target.value)}
+            className="w-full rounded-xl border p-2"
+          >
+            {tabs.map(t => (
+              <option key={t.id} value={t.id}>
+                {t.label}
+              </option>
+            ))}
           </select>
         </div>
+
         {tab === "feed" && <Feed />}
         {tab === "diary" && <Diary />}
         {tab === "mood" && <MoodBoard />}
@@ -807,9 +838,33 @@ export default function App() {
 
       <footer className="mt-10 border-t">
         <div className="max-w-6xl mx-auto px-4 py-6 text-xs text-slate-500">
-          © {new Date().getFullYear()} SafeSpace (MVP nội bộ). Dữ liệu lưu cục bộ (localStorage). Không thay thế tư vấn y tế/chuyên môn.
+          © {new Date().getFullYear()} SafeSpace (MVP nội bộ). Dữ liệu lưu cục bộ (localStorage).
+          Không thay thế tư vấn y tế/chuyên môn.
         </div>
       </footer>
     </div>
+  );
+}
+
+/* ===== App wrapper: bọc Auth + Router ===== */
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          {/* Các route còn lại đều yêu cầu đăng nhập */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <MainApp />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
