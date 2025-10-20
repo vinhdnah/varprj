@@ -737,15 +737,22 @@ function Mentors() {
   );
 }
 
-// ---------- Groups (có mục nhập link khi tạo nhóm & tham gia bằng link) ----------
+// ---------- Groups (2 nhóm cố định + tạo thêm nhóm mới) ----------
 function Groups() {
   const [groups, setGroups] = useLocal(KEY.groups, [
     {
       id: crypto.randomUUID(),
-      name: "Nhóm học Toán 12",
-      desc: "Chia sẻ đề và lời giải.",
-      members: 12,
-      join: "https://zalo.me/g/your-group-code",
+      name: "Ôn Văn TN 2026",
+      desc: "Chia sẻ tài liệu, đề và lời giải Văn cho kỳ thi TN 2026.",
+      members: 25,
+      join: "https://zalo.me/g/nshrhq347",
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "Ôn Toán TN 2026",
+      desc: "Cùng nhau luyện đề và trao đổi kiến thức Toán TN 2026.",
+      members: 30,
+      join: "https://zalo.me/g/ndlhet244",
     },
   ]);
 
