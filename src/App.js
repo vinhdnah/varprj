@@ -1,5 +1,53 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useAuth } from "./auth/AuthContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthProvider from "./auth/AuthContext";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+// ...
+function SafeSpaceAppLogin() {
+  const [tab, setTab] = useState("feed");
+  const { user, logout } = useAuth();
 
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          {/* ... logo & nav như cũ ... */}
+          <div className="flex items-center gap-3">
+            <div className="text-sm text-slate-600 hidden md:block">
+              {user?.displayName || user?.email}
+            </div>
+            <button onClick={logout} className="px-3 py-1.5 rounded-xl bg-slate-100">Đăng xuất</button>
+          </div>
+        </div>
+      </header>
+      {/* ... phần main + footer giữ nguyên ... */}
+    </div>
+  );
+}
+// EXPORT CUỐI CÙNG
+export default function Root() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <SafeSpaceApp />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
 /**
  * SafeSpace — MVP single‑file React app (VN)
  * Notes:
@@ -737,7 +785,7 @@ function Mentors() {
   );
 }
 
-// ---------- Groups (2 nhóm cố định + tạo thêm nhóm mới) ----------
+// ---------- Groups (hiển thị 2 nhóm Văn & Toán cố định với link Zalo) ----------
 function Groups() {
   const [groups, setGroups] = useLocal(KEY.groups, [
     {
@@ -758,7 +806,7 @@ function Groups() {
 
   const [n, setN] = useState("");
   const [d, setD] = useState("");
-  const [j, setJ] = useState(""); // link tham gia
+  const [j, setJ] = useState("");
 
   function add() {
     if (!n.trim()) return;
@@ -783,11 +831,7 @@ function Groups() {
       window.open(url, "_blank", "noopener");
       return;
     }
-    const u = prompt("Dán link tham gia nhóm (Zalo/Discord/Facebook/Meet):");
-    if (u && u.trim()) {
-      setGroups(groups.map(x => (x.id === g.id ? { ...x, join: u.trim() } : x)));
-      setTimeout(() => window.open(u.trim().startsWith("http") ? u.trim() : `https://${u.trim()}`, "_blank", "noopener"));
-    }
+    alert("Nhóm này chưa có link tham gia.");
   }
 
   function copyInvite(g) {
@@ -844,6 +888,7 @@ function Groups() {
     </div>
   );
 }
+
 
 
 // ---------- Events ----------
@@ -986,7 +1031,7 @@ function Rules() {
 }
 
 // ---------- App Shell ----------
-export default function App() {
+export function SafeSpaceApp() {
   const [tab, setTab] = useState("feed");
 
   return (
