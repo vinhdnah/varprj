@@ -5,29 +5,7 @@ import AuthProvider from "./auth/AuthContext";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-// ...
-function SafeSpaceAppLogin() {
-  const [tab, setTab] = useState("feed");
-  const { user, logout } = useAuth();
 
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          {/* ... logo & nav như cũ ... */}
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-slate-600 hidden md:block">
-              {user?.displayName || user?.email}
-            </div>
-            <button onClick={logout} className="px-3 py-1.5 rounded-xl bg-slate-100">Đăng xuất</button>
-          </div>
-        </div>
-      </header>
-      {/* ... phần main + footer giữ nguyên ... */}
-    </div>
-  );
-}
-// EXPORT CUỐI CÙNG
 export default function Root() {
   return (
     <AuthProvider>
@@ -752,31 +730,46 @@ function Mentors() {
   const mentors = [
     {
       name: "Cô H., Tâm lý học đường",
-      contact: "co.h@example.edu",
+      contact: "https://trilieutamly.com/chuyen-gia",
       topics: ["Căng thẳng thi cử", "Kỹ năng học"],
       office: "Phòng Tư vấn",
     },
     {
       name: "Anh T., Kỹ sư phần mềm",
-      contact: "anh.t@company.com",
+      contact: "https://laptrinh.bkacad.edu.vn/",
       topics: ["CNTT", "Dự án sinh viên"],
       office: "Online",
     },
   ];
+
   return (
     <Section title="Danh bạ cố vấn" desc="Liên hệ khi cần hỗ trợ.">
       <div className="grid md:grid-cols-2 gap-3">
         {mentors.map((m, i) => (
-          <div key={i} className="p-4 rounded-2xl border">
-            <div className="font-semibold">{m.name}</div>
-            <div className="text-sm text-slate-700">Chủ đề: {m.topics.join(", ")}</div>
+          <div key={i} className="p-4 rounded-2xl border bg-white">
+            <div className="font-semibold text-slate-800">{m.name}</div>
+            <div className="text-sm text-slate-700">
+              Chủ đề: {m.topics.join(", ")}
+            </div>
             <div className="text-sm">
-              Liên hệ: <a className="text-sky-700" href={`mailto:${m.contact}`}>{m.contact}</a>
+              Liên hệ:{" "}
+              <a
+                href={m.contact}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sky-700 underline"
+              >
+                Xem chi tiết
+              </a>
             </div>
             <div className="text-sm">Hình thức: {m.office}</div>
             <div className="mt-2 flex gap-2">
-              <button className="px-3 py-1.5 rounded-lg bg-slate-100">Hẹn lịch</button>
-              <button className="px-3 py-1.5 rounded-lg bg-slate-100">Gửi email</button>
+              <button className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
+                Hẹn lịch
+              </button>
+              <button className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200">
+                Gửi email
+              </button>
             </div>
           </div>
         ))}
